@@ -30,7 +30,8 @@ const { decrypt}= require('../middlewares/crypto');
         required: true,
         trim: true,
         set: encrypt,
-        get: decrypt, 
+        get: decrypt,
+        
     },
     PhoneNumber:{
            type:String,

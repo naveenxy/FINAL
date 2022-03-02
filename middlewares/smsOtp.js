@@ -4,13 +4,12 @@ require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 })
 sgMail.setApiKey(process.env.API_KEY);
-console.log(process.env.TWILIO_ACCOUNT_SID)
-console.log(process.env.TWILIO_AUTH_TOKEN)
+
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const  ServiceSid=process.env.MESSAGING_SERVICE_ID
 const client = require('twilio')(accountSid,authToken);
-const generateOTP=require("randomtask").generaterandomNumbers(6)
+const generateOTP=require("random-otp").generaterandomNumbers(6)
 /*function generateOTP() {
   console.log("1")
   var digits = '0123456789';
