@@ -4,7 +4,8 @@ require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 })
 sgMail.setApiKey(process.env.API_KEY);
-
+console.log(process.env.TWILIO_ACCOUNT_SID)
+console.log(process.env.TWILIO_AUTH_TOKEN)
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const  ServiceSid=process.env.MESSAGING_SERVICE_ID
@@ -21,10 +22,7 @@ const generateOTP=require("randomtask").generaterandomNumbers(6)
 }*/
 const smsOtp=async(req,res,decryptedNumber,decryptedEmail)=>{
    res.otp=generateOTP
-   console.log(decryptedNumber)
-   console.log(decryptedEmail)
-   console.log(res.otp)
-  await client.messages 
+   await client.messages 
       .create({ 
          body: 'Your OTP is '+res.otp+' your otp will expires in 5 mins   -Team SnapChat', 
          //from: '+19377613900', 

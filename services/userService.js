@@ -31,6 +31,7 @@ const register=async(req,res,next)=>
         {
         await smsOtp(req,res,PhoneNumber,EmailId)
         res.send("enter otp")
+        console.log("111")
         const otp =res.otp
         console.log(otp)
        await userDao.saveOtp(req,res,otp,username)
