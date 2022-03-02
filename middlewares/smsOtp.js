@@ -9,16 +9,21 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const  ServiceSid=process.env.MESSAGING_SERVICE_ID
 const client = require('twilio')(accountSid,authToken);
-function generateOTP() {
+const generateOTP=require("randomtask").generaterandomNumbers(6)
+/*function generateOTP() {
+  console.log("1")
   var digits = '0123456789';
   let OTP = '';
   for (let i = 0; i < 6; i++ ) {
       OTP += digits[Math.floor(Math.random() * 10)];
   }
   return OTP;
-}
+}*/
 const smsOtp=async(req,res,decryptedNumber,decryptedEmail)=>{
-   res.otp=generateOTP()
+   res.otp=generateOTP
+   console.log(decryptedNumber)
+   console.log(decryptedEmail)
+   console.log(res.otp)
   await client.messages 
       .create({ 
          body: 'Your OTP is '+res.otp+' your otp will expires in 5 mins   -Team SnapChat', 

@@ -27,7 +27,7 @@ const register=async(req,res,next)=>
         username=user.username
         PhoneNumber=user.PhoneNumber
        
-          if(PhoneNumber)
+        if(PhoneNumber)
         {
         await smsOtp(req,res,PhoneNumber,EmailId)
         res.send("enter otp")
@@ -43,7 +43,7 @@ const register=async(req,res,next)=>
 }
 catch(e)
  {
-    console.log('Error in useerseevuce')
+    console.log('Error in userservice')
  }}
 
 const otpVerify=async(req,res)=>{
