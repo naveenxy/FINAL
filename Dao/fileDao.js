@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const mongourl = 'mongodb://127.0.0.1:27017/task'
 const Grid = require('gridfs-stream')
 const {decrypttext}=require('../middlewares/crypto')
+const _ =require('lodash')
 const conn = mongoose.createConnection(mongourl,{ useNewUrlParser: true,useUnifiedTopology: true } )
 let gfs
 conn.once('open', ()=> {
@@ -70,7 +71,7 @@ const deletefile=async (req,res,fileId)=>{
     await User.updateOne( {username:req.body.username},
     { $unset: { file: "" }}
   )
-  return gfs.files.deleteOne({ _id: fileId });
+  //return gfs.files.deleteOne({ _id: fileId });
   
 }
  const readfile=async(req,res,fileid)=>{
@@ -83,11 +84,19 @@ const deletefile=async (req,res,fileId)=>{
  const gfsfiledelete=(req,res,fileId)=>{
      gfs.files.deleteOne({ _id: fileId })
  }
- const modifyuser=async(req,res)=>{
+ const modifyuser=async(req,res,fileID)=>{
     const username=req.body.username
-    const file=req.file
-    const fileId=file.id
-   return await  User.updateOne({username:username},
+    var files=[]
+    files.arr=req.files
+    const y= _.map(files.arr,function(obj){
+      var arr=[]
+      return _.concat(arr, obj.id);
+     
+    })
+     const x= _.flattenDeep(y);
+    const fileId=_.concat(fileID,x)
+  
+    await  User.updateOne({username:username},
         {
             $set:{file:fileId}
         
@@ -96,12 +105,18 @@ const deletefile=async (req,res,fileId)=>{
         })}
 const updateuser=async(req,res)=>{
     const username=req.body.username
-    const file=req.file
-    const fileId=file.id
+    var files=[]
+    files.arr=req.files
+    const y= _.map(files.arr,function(obj){
+      var arr=[]
+      return _.concat(arr, obj.id);
+     
+    })
+    const fileId= _.flattenDeep(y)
+    
   return await  User.updateOne({username:username},
         {
             $set:{file:fileId}
-        
         },{multi:true}, function(err, user){ 
           res.send(' Update completed successfully ') 
         })}    

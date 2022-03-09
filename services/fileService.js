@@ -2,6 +2,7 @@ const express=require('express')
 const mongoose = require('mongoose')
 const fileDao=require('../Dao/fileDao')
 const cron =require('node-cron')
+const _ =require('lodash')
 //process.env.TZ = 'Canada/Newfoundland'
 /*var d = new Date()
 d.setDate(24)
@@ -39,28 +40,19 @@ const read =async(req,res)=>{
     
   { 
       console.log(user)
-      console.log(user[0].createdAt.toString())
-      if(user[0].file=== undefined)
+     // console.log(user[0].createdAt.toString())
+      if(_.isEmpty(user[0].file))
            {
                res.send("This user does not updated the document")
             }
           else{
            
-         const fileid= new mongoose.mongo.ObjectId(user[0].file);
-         
-             fileDao.readuser(req,res,fileid).then((file) =>{ 
-                if(!file || file.length === 0) {
-                    return res.status(404).json({
-                   err: 'No file exist'
-                    })
-                }
-                  else{
-                       fileDao.readfile(req,res,fileid)
-                  }}).catch((e)=>{
-                     return res.send("error")
-                  })}
+         const fileid= new mongoose.mongo.ObjectId(user[0].file[1]);
+         console.log(fileid)
+           fileDao.readfile(req,res,fileid)
+              }
 }).catch((error)=>{
-     res.send('username not found')
+     res.send('error')
   })
 }
 catch(e){
@@ -95,28 +87,22 @@ return res.send("Username does not existt")
 
  const fileId=find.file
    const deletefileresult= await fileDao.deletefile(req,res,fileId)
-   const user= deletefileresult.result
-   console.log(user)
-   
-        if(user.n===0 &&user.ok===1){
-             return res.send("User does not updated a file")
-         }
-         else if(user.n===1 &&user.ok===1)
-         {
-             return res.send("File Deleted!")
-         }
-     
-    }
+ if(_.isEmpty(find.file)){
+     return res.send("User does not updated a file")
+ }
+   else {
+    return res.send("Files Deleted!")
+ }  
+}
 //update the document
 const update=async (req, res) =>{
 try{
    await fileDao.finduser(req,res).then((response) => {
        console.log(response)
-       if(response==null) return res.send("Username does not existt")
-       if(response.file){
-           const fileId=response.file
-          fileDao.gfsfiledelete(req,res,fileId)
-           fileDao.modifyuser(req,res)
+    if(_.isEmpty(response)) return res.send("Username does not exist")
+       if(!_.isEmpty(response.file)){
+           const fileID=response.file
+           fileDao.modifyuser(req,res,fileID)
         }
        else{
           fileDao.updateuser(req,res)

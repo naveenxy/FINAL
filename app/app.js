@@ -1,11 +1,12 @@
 const express=require('express')
 const app =express()
 const bodyParser=require('body-parser')
+const mongoose = require('mongoose')
 const Routes=require('../routes/user')
 const Route=require('../routes/file')
 const weatherRoute=require('../routes/weather')
 const ip=require('../routes/ip')
-const mongoose = require('mongoose')
+
 const path = require('path')
 const cronJob=require('../middlewares/cronJob')
 

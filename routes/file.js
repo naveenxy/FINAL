@@ -9,7 +9,7 @@ const User=require('../models/user')
 
  
  router.get('/getUser',token.accessTokenVerify,paginatedResults(User),fileService.getUser)
- router.patch('/update',token.accessTokenVerify,upload.single('file'),fileService.update)
+ router.patch('/update',token.accessTokenVerify,upload.array('file', 12),fileService.update)
  router.get('/read',token.accessTokenVerify,fileService.read)
  router.delete('/delete',token.accessTokenVerify,fileService.deleteuser)
  router.delete('/deletefile',token.accessTokenVerify,fileService.deletefile)

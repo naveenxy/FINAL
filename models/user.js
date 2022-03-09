@@ -54,7 +54,7 @@ const { decrypt}= require('../middlewares/crypto');
                },
    file:
     {
-        type:ObjectId
+        type:[Schema.Types.ObjectId]
       
     },
     OTP:{
