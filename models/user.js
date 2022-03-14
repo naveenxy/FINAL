@@ -35,7 +35,6 @@ const { decrypt}= require('../middlewares/crypto');
     },
     PhoneNumber:{
            type:String,
-           required: true,
            trim: true,
            maxLenght:10,
           unique:true,
@@ -73,5 +72,11 @@ const { decrypt}= require('../middlewares/crypto');
     toJSON: { getters: true, setters: true },
     //runSettersOnQuery: true
 })
+/*userSchema.pre('save', async function(next) {
+const user = this
+console.log(user);
+user.Password = await bcrypt.hash(user.Password,8)
+    next()
 
+});*/
     module.exports=mongoose.model("User",User)

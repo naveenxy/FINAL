@@ -18,8 +18,7 @@ var timezone=Intl.DateTimeFormat().resolvedOptions().timeZone
 
 const createUser=async(req,res)=>{
     const hashedPassword= await hashGenerate(req.body.password)
-    
-        const user =new User({
+      const user =new User({
        FirstName:req.body.FirstName, 
        LastName:req.body.LastName,
        username:req.body.username,
@@ -49,7 +48,8 @@ const saveOtp=async(req,res,otp,username)=>{
         {
             $set:{OTP:otp,
                 OtpStatus:'Pending',
-                Location:timezone
+                Location:timezone,
+                file:null
             }
         
         },{multi:true}, function(err, user){ 

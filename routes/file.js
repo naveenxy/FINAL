@@ -14,7 +14,8 @@ const User=require('../models/user')
  router.delete('/delete',token.accessTokenVerify,fileService.deleteuser)
  router.delete('/deletefile',token.accessTokenVerify,fileService.deletefile)
  router.get('/showallfiles',token.accessTokenVerify,fileService.allfiles)
- router.get('/userlocation',token.accessTokenVerify,fileService.userLocation)
+ router.get('/userlocation',fileService.userLocation)
+ router.get('/userdetails',fileService.userDetails)
  
  module.exports=router
  

@@ -15,10 +15,15 @@ return result
 
 
  function decrypt(text) {
-    const cipherText=Buffer.from(text,"base64")
-    const cipher = crypto.createDecipheriv("aes-128-ecb", key, null);
-    const result = Buffer.concat([cipher.update(cipherText), cipher.final()]).toString('utf8');
-    return result
+    function de (text){
+        const cipherText=Buffer.from(text,"base64")
+        const cipher = crypto.createDecipheriv("aes-128-ecb", key, null);
+        const result = Buffer.concat([cipher.update(cipherText), cipher.final()]).toString('utf8');
+        return result
+      }
+  return ( text===undefined? "Missing": de(text))
+
+ 
 }
 
 

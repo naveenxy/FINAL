@@ -5,6 +5,7 @@ const mongourl = 'mongodb://127.0.0.1:27017/task'
 const Grid = require('gridfs-stream')
 const {decrypttext}=require('../middlewares/crypto')
 const _ =require('lodash')
+const { response } = require('express')
 const conn = mongoose.createConnection(mongourl,{ useNewUrlParser: true,useUnifiedTopology: true } )
 let gfs
 conn.once('open', ()=> {
@@ -75,10 +76,14 @@ const deletefile=async (req,res,fileId)=>{
   
 }
  const readfile=async(req,res,fileid)=>{
-   const readstream= gfs.createReadStream({_id:fileid});
+ 
+  _.map(fileid,function(obj){
+    const readstream= gfs.createReadStream(obj);
+    readstream.pipe(res)
+    // return readstream.pipe(res);
+   })
 
-  readstream.pipe(res);
-
+  
  }
  const finduser=async(req,res)=>{return await User.findOne({username:req.body.username})}
  const gfsfiledelete=(req,res,fileId)=>{
@@ -169,4 +174,147 @@ const locate=async(req,res)=>{
   }
   ])
 }
-module.exports={countDocuments,getUser,showallfiles,readfile,deletefile,deleteuser,finduser,updateuser,modifyuser,findoneuser,readuser, decrypuser,gfsfiledelete,locate}
+const userDetailsDao=async(req,res)=>{
+  const user= await User.find({})
+ // console.log(user)
+return  User.aggregate([
+  {
+    $facet: {
+    'Total number of users': [
+     { $count: 'Total number of users' }
+    ],
+   
+    'No of users with mobile number': [
+      { $match: { PhoneNumber: { $ne: null } } },
+        { $count: 'No of users with mobile number' }
+    ],
+    'Number of users with files': [
+      { $match: { file: { $ne: null } }},
+      { $count: 'Number of users with files' }
+  ],
+  'Number of users without files': [
+    { $match: { file: { $eq: null } }},
+    { $count: 'Number of users without files' }
+],
+'Total number of files': [
+ { $match:{ file: { $ne: null }} },
+ {$group: { _id: null, 'Total number of files': { $sum: { $size: "$file"}} }}
+
+] }
+},
+{
+  $project: {
+  'Total number of users': {$ifNull:[{ $arrayElemAt: ['$Total number of users.Total number of users', 0]},0] },
+  'No of users with mobile number': {$ifNull:[{ $arrayElemAt: ['$No of users with mobile number.No of users with mobile number', 0]},0] },
+  'Number of users with files': {$ifNull:[{ $arrayElemAt: ['$Number of users with files.Number of users with files', 0]},0] },
+  'Number of users without files':{$ifNull:[{ $arrayElemAt: ['$Number of users without files.Number of users without files', 0] },0]},
+  'Total number of files': {$ifNull:[{ $arrayElemAt: ['$Total number of files.Total number of files', 0]},0] },
+  
+  
+  }
+}
+])
+  
+}
+module.exports={countDocuments,getUser,showallfiles,readfile,deletefile,deleteuser,finduser,updateuser,modifyuser,findoneuser,readuser, decrypuser,gfsfiledelete,locate,userDetailsDao}
+// {file: { $elemMatch: { $ne: null } }}
+/*
+TotalLights": {
+      "$ifNull": [{ "$arrayElemAt": ["$array.TotalLights", 0] }, 0 ]
+    }
+*/
+
+
+
+
+
+
+
+/* {
+      $count:"Total number of users"
+    },
+    {$addFields: {
+      // "Total number of users":{$count:1},
+       'PhoneNumber_exists': {'$or': [
+           {'$eq': ['$PhoneNumber', null]},
+           {'$gt': ['$PhoneNumber', null]},
+       ]},
+       'file_exists': {'$or': [
+         {'$eq': ['$file', $ne=[]]},
+         {'$gt': ['$file',  $ne=[]]},
+     ]},
+     "numberOffiles": { $cond: { if: { $isArray: "$file" }, then: { $size: "$file" }, else: 0} },
+   },
+   FinalResult:{
+ 
+     $function:{
+     body: 
+     function(PhoneNumber_exists,file_exists,numberOffiles){
+       return PhoneNumber_exists
+     },
+     args: ["$PhoneNumber_exists","$file_exists","$numberOffiles"],
+     lang: "js"
+   }
+ }
+ },{
+   $project:{
+     "_id":0,
+     "PhoneNumber_exists":1,
+     'file_exists':1,
+     "numberOffiles":1,
+     "FinalResult":1
+  //   "total number of files":1
+   //  "Total number of users":1
+  //   "TotalNumberofFiles":1
+ // quizTotal: { $sum: "$numberOffiles"}
+     
+ }
+ } 
+ */
+ /*
+ ,{
+   {
+    $addFields: {
+      // "Total number of users":{$count:1},
+       'PhoneNumber_exists': {'$or': [
+           {'$eq': ['$PhoneNumber', null]},
+           {'$gt': ['$PhoneNumber', null]},
+       ]},
+       'file_exists': {'$or': [
+         {'$eq': ['$file', $ne=[]]},
+         {'$gt': ['$file',  $ne=[]]},
+     ]},
+     "numberOffiles": { $cond: { if: { $isArray: "$file" }, then: { $size: "$file" }, else: 0} },
+  }
+  
+ },
+ {
+   $addFields:{
+    Totalfiles:{
+      $function:
+        {
+           body: function(numberOffiles) {
+              if(numberOffiles) return 1
+              else return 0
+              
+            
+           },
+           args: [ '$PhoneNumber_exists'],
+           lang: "js"
+        }
+      }
+
+   }
+ },{
+  $project:{
+    "_id":0,
+    "username":1,
+    "PhoneNumber_exists":1,
+    'file_exists':1,
+    "numberOffiles":1,
+  "Totalfiles":1
+   }
+} 
+ 
+ 
+ */

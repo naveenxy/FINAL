@@ -35,11 +35,12 @@ const allfiles=async(req,res,next)=>{
 //read operation
 const read =async(req,res)=>{
     try{ 
-        console.log("1")
+       // console.log("1")
     await fileDao.findoneuser(req,res).then((user)=>
     
   { 
-      console.log(user)
+     // console.log(user)
+      //console.log(user[0].file)
      // console.log(user[0].createdAt.toString())
       if(_.isEmpty(user[0].file))
            {
@@ -47,8 +48,9 @@ const read =async(req,res)=>{
             }
           else{
            
-         const fileid= new mongoose.mongo.ObjectId(user[0].file[1]);
-         console.log(fileid)
+         //const fileid= new mongoose.mongo.ObjectId(user[0].file[1]);
+         const fileid=user[0].file
+         //console.log(fileid)
            fileDao.readfile(req,res,fileid)
               }
 }).catch((error)=>{
@@ -105,6 +107,7 @@ try{
            fileDao.modifyuser(req,res,fileID)
         }
        else{
+         
           fileDao.updateuser(req,res)
           }
    })
@@ -122,7 +125,13 @@ try{
       res.send(result)
       
  }
-module.exports={update,getUser,read,deleteuser,deletefile,allfiles,userLocation}
+ const userDetails=async(req,res)=>{
+      const result=await fileDao.userDetailsDao(req,res)
+      console.log(result)
+     res.send(result)
+      
+ }
+module.exports={update,getUser,read,deleteuser,deletefile,allfiles,userLocation,userDetails}
 
 
 
