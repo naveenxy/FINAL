@@ -10,9 +10,16 @@ const ip=require('../routes/ip')
 const path = require('path')
 const cronJob=require('../middlewares/cronJob')
 
+var EventEmitter = require('events')
+class MyEmitter extends EventEmitter{}
+var myEmitter = new MyEmitter();
+myEmitter.on("sam",(data)=>{
+    console.log(data)
+})
 require('dotenv').config({
    path: path.resolve(__dirname, '../.env')
 })
+console.log(path.resolve('/user.js'))
 //process.env.TZ = 'Canada/Newfoundland'
 //d = new Date()
 //console.log(d.getTimezoneOffset())
